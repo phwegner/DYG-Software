@@ -1,0 +1,11 @@
+ultralytics
+pandas
+numpy
+tqdm
+matplotlib
+seaborn
+opencv-python
+scikit-learn
+scipy
+pytest
+pillow
