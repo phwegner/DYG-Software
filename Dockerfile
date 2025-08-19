@@ -10,6 +10,7 @@ COPY requirements.txt ./
 RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
+        curl \
     && pip install --upgrade pip \
     && pip install --prefix=/install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
