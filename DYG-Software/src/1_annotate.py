@@ -19,11 +19,13 @@ def main():
     ## Confis 
 
     config = ConfigParser()
-    config.read("../config.ini")
+    
 
     video_folder = Path(args.video_folder)
     project = args.project
     SCRIPT_DIR = Path(__file__).resolve().parent
+
+    config.read(SCRIPT_DIR / '../config.ini')
 
     # Read config value (could be relative, e.g. "../model_files")
     yolo_model_rel = config['PATHS']['yolo_model_path']
@@ -43,7 +45,7 @@ def main():
         logging.error(f"Video folder does not exist: {video_folder}")
         return
 
-    model_path = Path(yolo_model + "/yolo11x-pose.pt")
+    model_path = Path(yolo_model / "yolo11x-pose.pt")
     if not model_path.exists():
         logging.error(f"YOLO model not found at {model_path}")
         return
