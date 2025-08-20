@@ -10,7 +10,6 @@ COPY requirements.txt ./
 RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
-        curl \
     && pip install --upgrade pip \
     && pip install --prefix=/install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
@@ -25,6 +24,7 @@ WORKDIR /app
 # Install only minimal system deps needed at runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libgl1 \
+        curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed Python packages from builder
