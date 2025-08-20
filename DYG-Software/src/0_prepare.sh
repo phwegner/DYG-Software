@@ -2,7 +2,10 @@
 
 # Set variables
 MODEL_URL="https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x-pose.pt"
-TARGET_DIR="../model_files"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# Define target dir relative to script location
+TARGET_DIR="$SCRIPT_DIR/../model_files"
 TARGET_FILE="$TARGET_DIR/yolo11x-pose.pt"
 
 # Logging function

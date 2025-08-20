@@ -23,7 +23,13 @@ def main():
 
     video_folder = Path(args.video_folder)
     project = args.project
-    yolo_model = config['PATHS']['yolo_model_path']
+    SCRIPT_DIR = Path(__file__).resolve().parent
+
+    # Read config value (could be relative, e.g. "../model_files")
+    yolo_model_rel = config['PATHS']['yolo_model_path']
+
+    # Make it absolute relative to script location
+    yolo_model = (SCRIPT_DIR / yolo_model_rel).resolve()
 
     # -------------------
     # Logging setup

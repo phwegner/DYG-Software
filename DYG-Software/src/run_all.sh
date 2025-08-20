@@ -51,10 +51,15 @@ fi
 
 # 1: annotate
 log "Running annotate"
-python3 "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}"
+python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}"
 
 # 2: extract
 log "Running extract"
-python3 "${ROOT_DIR}/2_extract_ts.py" --path "${PROJECT}"
+python "${ROOT_DIR}/2_extract_ts.py" --path "${PROJECT}"
+
+# 3: add frame numbers to annotated videos
+log "Adding frame numbers to annotated videos"
+PROJECT=${PROJECT%/}
+bash "${ROOT_DIR}/add_frame_numbers.sh" --input-dir "${PROJECT}"
 
 log "Full run complete"
