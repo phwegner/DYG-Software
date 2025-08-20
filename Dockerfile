@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
     && pip install --upgrade pip \
-    && pip install ${TORCH_INDEX_URL:+--extra-index-url $TORCH_INDEX_URL} torch torchvision torchaudio \
+    && pip install --prefix=/install ${TORCH_INDEX_URL:+--extra-index-url $TORCH_INDEX_URL} torch torchvision torchaudio \
     && pip install --prefix=/install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
