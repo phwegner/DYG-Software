@@ -13,9 +13,12 @@ log() {
 
 usage() {
   cat <<EOF
-Usage: $0 --input-dir <videos_dir> --project <project_name>
+Usage: $0 [--input-dir <videos_dir>] [--project <project_path>]
 
 This will run the prepare script, annotate videos with YOLO, then extract timeseries.
+If no arguments are provided, defaults will be used:
+  input-dir -> ../tests (relative to this script)
+  project   -> ../annotated_videos (relative to this script)
 EOF
 }
 
@@ -35,31 +38,48 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$INPUT_DIR" || -z "$PROJECT" ]]; then
-  usage; exit 1
+# Default paths (relative to script directory)
+DEFAULT_INPUT="${ROOT_DIR}/../input_videos"
+DEFAULT_PROJECT="${ROOT_DIR}/../default_project"
+
+if [[ -z "$INPUT_DIR" ]]; then
+  INPUT_DIR="$DEFAULT_INPUT"
+  log "No input-dir provided, using default: $INPUT_DIR"
 fi
+if [[ -z "$PROJECT" ]]; then
+  PROJECT="$DEFAULT_PROJECT"
+  log "No project provided, using default: $PROJECT"
+fi
+
+# Normalize PROJECT (remove trailing slash)
+PROJECT=${PROJECT%/}
 
 log "Starting full run: prepare -> annotate -> extract"
 
 # 0: prepare (download model)
-if [[ -x "${ROOT_DIR}/0_prepare.sh" ]]; then
+if [[ -f "${ROOT_DIR}/0_prepare.sh" ]]; then
   log "Running prepare script"
-  bash "${ROOT_DIR}/0_prepare.sh"
+  bash "${ROOT_DIR}/0_prepare.sh" || { log "Prepare script failed"; exit 1; }
 else
-  log "Prepare script not found or not executable: ${ROOT_DIR}/0_prepare.sh"
+  log "Prepare script not found: ${ROOT_DIR}/0_prepare.sh"
+  exit 1
 fi
 
 # 1: annotate
 log "Running annotate"
-python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}"
+python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}" || { log "Annotate step failed"; exit 1; }
 
 # 2: extract
 log "Running extract"
-python "${ROOT_DIR}/2_extract_ts.py" --path "${PROJECT}"
+python "${ROOT_DIR}/2_extract_ts.py" --path "${PROJECT}" || { log "Extract step failed"; exit 1; }
 
 # 3: add frame numbers to annotated videos
 log "Adding frame numbers to annotated videos"
-PROJECT=${PROJECT%/}
-bash "${ROOT_DIR}/add_frame_numbers.sh" --input-dir "${PROJECT}"
+if [[ -f "${ROOT_DIR}/add_frame_numbers.sh" ]]; then
+  bash "${ROOT_DIR}/add_frame_numbers.sh" --input-dir "${PROJECT}" || { log "Adding frame numbers failed"; exit 1; }
+else
+  log "add_frame_numbers.sh not found: ${ROOT_DIR}/add_frame_numbers.sh"
+  exit 1
+fi
 
 log "Full run complete"

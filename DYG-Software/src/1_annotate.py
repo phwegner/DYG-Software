@@ -8,24 +8,31 @@ from configparser import ConfigParser
 
 def main():
     # -------------------
+    # Script directory and config setup
+    # -------------------
+    SCRIPT_DIR = Path(__file__).parent.resolve()
+    config_path = SCRIPT_DIR / ".." / "config.ini"
+
+    if not config_path.exists():
+        logging.error(f"Config file not found: {config_path}")
+        return
+
+    config = ConfigParser()
+    config.read(config_path)
+
+    # -------------------
     # CLI arguments
     # -------------------
     parser = argparse.ArgumentParser(description="Run YOLO pose prediction on all videos in a folder.")
-    parser.add_argument("--video_folder", required=True, help="Path to the folder containing video files")
-    parser.add_argument("--project", required=True, help="Project name for YOLO output")
+    parser.add_argument("--video_folder", required=False, default=Path(SCRIPT_DIR / config['PATHS']['default_input_path']), help="Path to the folder containing video files")
+    parser.add_argument("--project", required=False, default=Path(SCRIPT_DIR / config['PATHS']['default_project']), help="Project name for YOLO output")
     # parser.add_argument("--yolo_model", default="../model_files", help="Path to YOLO models (default: ../model_files)")
     args = parser.parse_args()
 
-    ## Confis 
-
-    config = ConfigParser()
-    
 
     video_folder = Path(args.video_folder)
     project = args.project
-    SCRIPT_DIR = Path(__file__).resolve().parent
-
-    config.read(SCRIPT_DIR / '../config.ini')
+    
 
     # Read config value (could be relative, e.g. "../model_files")
     yolo_model_rel = config['PATHS']['yolo_model_path']
