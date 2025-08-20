@@ -44,15 +44,28 @@ The `Dockerfile` accepts a build argument `TORCH_INDEX_URL` which is prepended t
 
 ```bash
 # CUDA 11.7 (example)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 -t dyg-software .
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 --build-arg TORCH_CUDA=cu117 --build-arg TORCH_VERSION=2.0.1 --build-arg TORCHVISION_VERSION=0.15.2 --build-arg TORCHAUDIO_VERSION=2.0.1 -t dyg-software .
 
 # CUDA 12.x (example; replace with correct tag for your driver)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 -t dyg-software .
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 --build-arg TORCH_CUDA=cu121 --build-arg TORCH_VERSION=2.7.1 --build-arg TORCHVISION_VERSION=0.22.1 --build-arg TORCHAUDIO_VERSION=2.7.1 -t dyg-software .
 ```
 
-The Dockerfile will then run pip with `--extra-index-url <TORCH_INDEX_URL>` and install `torch torchvision torchaudio` from that index before installing the rest of `requirements.txt`.
+The `Dockerfile` in this repository installs `torch`, `torchvision` and `torchaudio` during the builder stage using the optional `TORCH_INDEX_URL` build argument.
 
-If you do not need GPU support, omit the `--build-arg` and the image will install CPU packages only.
+
+
+- The Docker build should use the `--build-arg TORCH_INDEX_URL=...` option to point pip at the PyTorch extra-index that provides CUDA-enabled wheels. Example:
+
+```bash
+# CUDA 11.7 (example)
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 -t dyg-software .
+```
+
+- Verify which torch wheel / CUDA tag to use by checking your host NVIDIA driver and CUDA compatibility. You can find supported/old releases and exact wheel tags on the PyTorch site — check the "Previous Versions" page if you need a specific older wheel:
+
+https://pytorch.org/get-started/previous-versions/
+
+- In short: choose a CUDA-enabled base image whose runtime matches the wheel tag you will install; pass the matching `TORCH_INDEX_URL` when building the image; then run the container with `--gpus all` (and having NVIDIA Container Toolkit installed on the host).
 
 Run a container (interactive):
 
