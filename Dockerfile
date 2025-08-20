@@ -10,7 +10,7 @@ ARG TORCH_INDEX_URL=""
 ARG TORCH_VERSION="2.0.1"
 ARG TORCH_CUDA="cu117"
 ARG TORCHVISION_VERSION="0.15.2"
-ARG TORCHAUDIO_VERSION="2.0.1"
+ARG TORCHAUDIO_VERSION="2.0.2"
 
 # Copy only requirements first (caching trick)
 COPY requirements.txt ./

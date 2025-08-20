@@ -44,7 +44,7 @@ The `Dockerfile` accepts a build argument `TORCH_INDEX_URL` which is prepended t
 
 ```bash
 # CUDA 11.7 (example)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 --build-arg TORCH_CUDA=cu117 --build-arg TORCH_VERSION=2.0.1 --build-arg TORCHVISION_VERSION=0.15.2 --build-arg TORCHAUDIO_VERSION=2.0.1 -t dyg-software .
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 --build-arg TORCH_CUDA=cu117 --build-arg TORCH_VERSION=2.0.1 --build-arg TORCHVISION_VERSION=0.15.2 --build-arg TORCHAUDIO_VERSION=2.0.2 -t dyg-software .
 
 # CUDA 12.x (example; replace with correct tag for your driver)
 docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 --build-arg TORCH_CUDA=cu121 --build-arg TORCH_VERSION=2.7.1 --build-arg TORCHVISION_VERSION=0.22.1 --build-arg TORCHAUDIO_VERSION=2.7.1 -t dyg-software .
