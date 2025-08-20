@@ -1,3 +1,20 @@
+# Optional GPU / CUDA instructions
+# If you have an NVIDIA GPU and want CUDA acceleration, install a CUDA-enabled
+# PyTorch build that matches your host drivers before installing the rest of
+# the requirements. Examples (pick the line matching your CUDA / driver):
+#
+# CUDA 11.7 example:
+#   pip install --index-url https://download.pytorch.org/whl/cu117 torch torchvision torchaudio --upgrade
+#
+# CUDA 12.x example (replace cu121 with the exact tag that matches your driver):
+#   pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio --upgrade
+#
+# After installing the appropriate torch wheel, install the remaining packages:
+#   pip install -r requirements.txt
+#
+# Use `nvidia-smi` on the host to check the driver version and consult
+# https://pytorch.org/get-started/locally/ for exact wheel tags if unsure.
+
 ultralytics
 pandas
 numpy

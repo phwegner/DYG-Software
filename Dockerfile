@@ -3,6 +3,9 @@ FROM python:3.11-slim as builder
 
 WORKDIR /app
 
+# Allow specifying an optional extra index URL for CUDA-enabled wheels (e.g. PyTorch)
+ARG TORCH_INDEX_URL=""
+
 # Copy only requirements first (caching trick)
 COPY requirements.txt ./
 
@@ -11,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
     && pip install --upgrade pip \
+    && pip install ${TORCH_INDEX_URL:+--extra-index-url $TORCH_INDEX_URL} torch torchvision torchaudio \
     && pip install --prefix=/install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
     && rm -rf /var/lib/apt/lists/*

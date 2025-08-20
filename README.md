@@ -5,11 +5,32 @@ Software Repository for DYG
 - Docker (optional, for containerized runs)
 - Python 3.11
 
-Install Python dependencies:
+## CUDA / GPU setup
+If you plan to run inference on GPU, install a CUDA-enabled PyTorch wheel that matches your host NVIDIA driver before installing the rest of the Python requirements. Examples:
+
+- Check driver and CUDA compatibility on the host with:
+
+```bash
+nvidia-smi
+```
+
+- Install a matching PyTorch wheel (examples):
+
+```bash
+# CUDA 11.7
+pip install --index-url https://download.pytorch.org/whl/cu117 torch torchvision torchaudio --upgrade
+
+# CUDA 12.x (replace cu121 with the accurate tag for your driver)
+pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio --upgrade
+```
+
+After that, install the rest of the requirements:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+See https://pytorch.org/get-started/locally/ for exact tags for your environment.
 
 ## Build (optional)
 To build a Docker image:
@@ -17,6 +38,21 @@ To build a Docker image:
 ```bash
 docker build -t dyg-software .
 ```
+
+# Build with PyTorch CUDA wheel index (optional)
+The `Dockerfile` accepts a build argument `TORCH_INDEX_URL` which is prepended to the `pip install` call inside the builder stage. Use this to point pip at the PyTorch extra-index for CUDA-enabled wheels that match your host drivers. Example:
+
+```bash
+# CUDA 11.7 (example)
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 -t dyg-software .
+
+# CUDA 12.x (example; replace with correct tag for your driver)
+docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 -t dyg-software .
+```
+
+The Dockerfile will then run pip with `--extra-index-url <TORCH_INDEX_URL>` and install `torch torchvision torchaudio` from that index before installing the rest of `requirements.txt`.
+
+If you do not need GPU support, omit the `--build-arg` and the image will install CPU packages only.
 
 Run a container (interactive):
 
