@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          torch==${TORCH_VERSION}+${TORCH_CUDA} \
          torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA} \
          torchaudio==${TORCHAUDIO_VERSION} \
-         --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} \
+         --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} -c pytorch -c nvidia \
     && pip install --prefix=/install -r requirements.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
