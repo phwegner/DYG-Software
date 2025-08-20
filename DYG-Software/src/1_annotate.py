@@ -3,7 +3,9 @@ import argparse
 import subprocess
 import logging
 from pathlib import Path
+import torch
 
+device = "0" if torch.cuda.is_available() else "cpu"
 from configparser import ConfigParser
 
 def main():
@@ -93,7 +95,10 @@ def main():
             except subprocess.CalledProcessError as e:
                 logging.error(f"Repair failed for {video.name}, skipping...")
                 continue
-
+        if device == "0":
+            logging.info("Using GPU for YOLO processing")
+        else:
+            logging.info("Using CPU for YOLO processing")
         cmd = [
             "yolo", "pose", "predict",
             f"model={model_path}",
@@ -101,6 +106,7 @@ def main():
             "save_txt=True",
             f"project={project}",
             f"name={video_id}"
+            f"device={device}",
         ]
 
         try:
