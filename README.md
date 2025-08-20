@@ -50,9 +50,7 @@ docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 
 docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 --build-arg TORCH_CUDA=cu121 --build-arg TORCH_VERSION=2.7.1 --build-arg TORCHVISION_VERSION=0.22.1 --build-arg TORCHAUDIO_VERSION=2.7.1 -t dyg-software .
 ```
 
-The `Dockerfile` in this repository installs `torch`, `torchvision` and `torchaudio` during the builder stage using the optional `TORCH_INDEX_URL` build argument.
-
-
+The `Dockerfile` in this repository installs `torch`, `torchvision` and `torchaudio` during the builder stage using the optional `TORCH_INDEX_URL`, `TORCH_CUDA`, `TORCH_VERSION`, `TORCHVISION_VERSION`, and `TORCHAUDIO_VERSION` build arguments.
 
 - The Docker build should use the `--build-arg TORCH_INDEX_URL=...` option to point pip at the PyTorch extra-index that provides CUDA-enabled wheels. Example:
 
