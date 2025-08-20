@@ -63,6 +63,40 @@ docker run -it --rm \
 
 Adjust paths as needed for your environment.
 
+### GPU support
+If you want to run inference on GPU inside Docker, install the NVIDIA Container Toolkit on the host and run the container with --gpus. Example (after building the image):
+
+```bash
+# Install nvidia-container-toolkit on the host (install steps depend on distro)
+# Run container with GPU access and bind mounts to defaults used by the runner
+docker run --gpus all -it --rm \
+  -v <PATH_WITH_VIDEOS>:/app/DYG-Software/input_videos \
+  -v <OUTPUT_PATH>:/app/DYG-Software/default_project \
+  -v <MODEL_STORAGE>:/app/DYG-Software/model_files \
+  dyg-software /app/DYG-Software/src/run_all.sh
+```
+
+Inside the container the `yolo` CLI (ultralytics) can then use available NVIDIA GPUs if CUDA libraries are present in the image or mounted from the host.
+
+### Singularity / Apptainer
+You can also produce a Singularity / Apptainer image from the Docker image and run it. Example workflow:
+
+```bash
+# 1) Build the Docker image locally (if not already built)
+docker build -t dyg-software .
+
+# 2) Build a Singularity image from the local Docker image (requires Singularity/Apptainer with docker-daemon support)
+singularity build dyg-software.sif docker-daemon://dyg-software:latest
+
+# 3) Run the Singularity image (bind host dirs into the container). Use --nv for NVIDIA GPU support.
+singularity exec --nv \
+  -B <PATH_WITH_VIDEOS>:/app/DYG-Software/input_videos \
+  -B <OUTPUT_PATH>:/app/DYG-Software/default_project \
+  -B <MODEL_STORAGE>:/app/DYG-Software/model_files \
+  dyg-software.sif /app/DYG-Software/src/run_all.sh
+```
+
+If your Singularity build environment cannot access the local Docker daemon, push the image to a registry and use `docker://<repo>:<tag>` in the `singularity build` command.
 
 ## Notes
 - The pipeline depends on the `yolo` CLI from ultralytics; ensure it is available in your environment or inside the Docker image.
