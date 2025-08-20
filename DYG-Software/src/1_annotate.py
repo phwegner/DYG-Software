@@ -105,7 +105,7 @@ def main():
             f"source={video}",
             "save_txt=True",
             f"project={project}",
-            f"name={video_id}"
+            f"name={video_id}",
             f"device={device}",
         ]
 

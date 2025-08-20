@@ -213,3 +213,5 @@ DYG-Software/model_files/
 # Test Path
 
 DYG-Software/src/test_project/
+
+DYG-Software/profile_default/*
