@@ -24,6 +24,7 @@ EOF
 
 INPUT_DIR=""
 PROJECT=""
+DEVICE=""
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -31,6 +32,8 @@ while [[ "$#" -gt 0 ]]; do
       INPUT_DIR="$2"; shift 2;;
     --project)
       PROJECT="$2"; shift 2;;
+    --device)
+      DEVICE="$2"; shift 2;;
     -h|--help)
       usage; exit 0;;
     *)
@@ -50,6 +53,7 @@ if [[ -z "$PROJECT" ]]; then
   PROJECT="$DEFAULT_PROJECT"
   log "No project provided, using default: $PROJECT"
 fi
+
 
 # Normalize PROJECT (remove trailing slash)
 PROJECT=${PROJECT%/}
@@ -79,7 +83,15 @@ INPUT_DIR="$CONVERT_DIR"  # point subsequent steps to converted mp4s
 
 # 1: annotate
 log "Running annotate"
-python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}" || { log "Annotate step failed"; exit 1; }
+ANNOTATE_CMD=(python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}")
+
+if [[ -n "$DEVICE" ]]; then
+  ANNOTATE_CMD+=(--device "$DEVICE")
+  log "Using device: $DEVICE"
+fi
+
+"${ANNOTATE_CMD[@]}" || { log "Annotate step failed"; exit 1; }
+
 
 # 2: extract
 log "Running extract"
