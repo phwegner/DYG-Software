@@ -11,6 +11,7 @@ ARG TORCH_CUDA="cu117"
 
 # Copy only requirements first (caching trick)
 COPY requirements.txt ./
+COPY constraints.txt ./
 
 # Install build dependencies and Python packages into /install
 RUN apt-get update && apt-get install -y --no-install-recommends \
