@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
     && pip install --upgrade pip \
-
     && pip install --prefix=/install --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} -r requirements.txt -c constraints.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
