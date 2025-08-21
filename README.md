@@ -6,31 +6,27 @@ Software Repository for DYG
 - Python 3.11
 
 ## CUDA / GPU setup
-If you plan to run inference on GPU, install a CUDA-enabled PyTorch wheel that matches your host NVIDIA driver before installing the rest of the Python requirements. Examples:
-
-- Check driver and CUDA compatibility on the host with:
+If you plan to run inference on GPU, ensure your host NVIDIA driver and CUDA compatibility are correct. Check with:
 
 ```bash
 nvidia-smi
 ```
 
-- Install a matching PyTorch wheel (examples):
+This repository uses a `constraints.txt` to pin exact package versions (including `torch`/`torchvision`/`torchaudio` when needed). Rather than installing `torch` separately, install all Python dependencies with pip while supplying the constraints file so versions are resolved against your pinned constraints.
+
+- If you want to install packages natively on the host, use:
 
 ```bash
-# CUDA 11.7
-pip install --index-url https://download.pytorch.org/whl/cu117 torch torchvision torchaudio --upgrade
-
-# CUDA 12.x (replace cu121 with the accurate tag for your driver)
-pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio --upgrade
+# Install all requirements using the pinned versions in constraints.txt
+pip install --extra-index-url https://download.pytorch.org/whl/<CUDA_VERSION> -r requirements.txt -c constraints.txt
 ```
 
-After that, install the rest of the requirements:
+- If you need CUDA-enabled PyTorch wheels that are not available via PyPI, adjust `constraints.txt` to reference the correct wheel filenames or use the appropriate extra-index/find-links. See the PyTorch docs for exact wheel names and compatibility:
 
-```bash
-pip install -r requirements.txt
-```
+https://pytorch.org/get-started/locally/
+https://pytorch.org/get-started/previous-versions/
 
-See https://pytorch.org/get-started/locally/ for exact tags for your environment.
+Note: when pinning versions in `constraints.txt`, ensure the `numpy` version is compatible with your chosen `torch` wheel to avoid binary incompatibilities.
 
 ## Build (optional)
 To build a Docker image (defaults, CPU-only):
@@ -49,6 +45,7 @@ This repository's `Dockerfile` now installs Python packages using a `constraints
 torch==2.0.1+cu117
 torchvision==0.15.2+cu117
 torchaudio==2.0.2+cu117
+numpy>=1.24,<2
 ```
 
 Note: depending on the wheel format you may also need to include the appropriate find-links or use the PyTorch index when installing. If you need to install CUDA-enabled wheels from PyTorch's index, follow the instructions below before building or include the correct `-f`/index in your constraints/install commands.
