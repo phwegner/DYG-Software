@@ -33,11 +33,38 @@ pip install -r requirements.txt
 See https://pytorch.org/get-started/locally/ for exact tags for your environment.
 
 ## Build (optional)
-To build a Docker image:
+To build a Docker image (defaults, CPU-only):
 
 ```bash
 docker build -t dyg-software .
 ```
+
+# CUDA / Torch packaging note (NEW)
+This repository's `Dockerfile` now installs Python packages using a `constraints.txt` file to pin exact package versions (including `torch`, `torchvision`, `torchaudio` when needed). The Docker build accepts a single build argument `TORCH_CUDA` which selects the CUDA variant tag used inside the image (for example `cu117` for CUDA 11.7).
+
+- Edit `constraints.txt` in the repo root to specify the exact `torch`/`torchvision`/`torchaudio` versions you want. Example constraint lines (illustrative only — use the exact versions that match your environment):
+
+```
+# Example lines for CUDA 11.7 (replace versions with those you need)
+torch==2.0.1+cu117
+torchvision==0.15.2+cu117
+torchaudio==2.0.2+cu117
+```
+
+Note: depending on the wheel format you may also need to include the appropriate find-links or use the PyTorch index when installing. If you need to install CUDA-enabled wheels from PyTorch's index, follow the instructions below before building or include the correct `-f`/index in your constraints/install commands.
+
+- Build the Docker image and pass the CUDA tag via `TORCH_CUDA` (example):
+
+```bash
+docker build --build-arg TORCH_CUDA=cu117 -t dyg-software .
+```
+
+- Make sure the versions pinned in `constraints.txt` are compatible with the CUDA tag you pass and with the base image you choose for GPU runtime. Check the host driver with `nvidia-smi` and consult the PyTorch compatibility pages:
+
+https://pytorch.org/get-started/locally/
+https://pytorch.org/get-started/previous-versions/
+
+If you do not need GPU support, omit the `--build-arg TORCH_CUDA` and use CPU-only constraints in `constraints.txt`.
 
 # Build with PyTorch CUDA wheel index (optional)
 The `Dockerfile` accepts a build argument `TORCH_INDEX_URL` which is prepended to the `pip install` call inside the builder stage. Use this to point pip at the PyTorch extra-index for CUDA-enabled wheels that match your host drivers. Example:

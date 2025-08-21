@@ -7,10 +7,7 @@ WORKDIR /app
 ARG TORCH_INDEX_URL=""
 
 # Build args
-ARG TORCH_VERSION="2.0.1"
 ARG TORCH_CUDA="cu117"
-ARG TORCHVISION_VERSION="0.15.2"
-ARG TORCHAUDIO_VERSION="2.0.2"
 
 # Copy only requirements first (caching trick)
 COPY requirements.txt ./
@@ -20,12 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         build-essential \
     && pip install --upgrade pip \
-    && pip install --prefix=/install \
-         torch==${TORCH_VERSION}+${TORCH_CUDA} \
-         torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA} \
-         torchaudio==${TORCHAUDIO_VERSION} \
-         --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA}\
-    && pip install --prefix=/install -r requirements.txt \
+
+    && pip install --prefix=/install --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} -r requirements.txt -c constraints.txt \
     && apt-get purge -y --auto-remove gcc build-essential \
     && rm -rf /var/lib/apt/lists/*
 
