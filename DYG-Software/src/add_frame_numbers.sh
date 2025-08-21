@@ -61,7 +61,7 @@ fi
 echo "Processing MP4 files under: $INPUT_DIR"
 
 # Find mp4 files and process them
-find "$INPUT_DIR" -type f -iname '*.mp4' -print0 | while IFS= read -r -d '' video; do
+find "$INPUT_DIR" -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.avi' -o -iname '*.mkv' \) -print0 | while IFS= read -r -d '' video; do
   echo "Found: $video"
   dir=$(dirname "$video")
   base=$(basename "$video")
