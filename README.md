@@ -63,31 +63,11 @@ https://pytorch.org/get-started/previous-versions/
 
 If you do not need GPU support, omit the `--build-arg TORCH_CUDA` and use CPU-only constraints in `constraints.txt`.
 
-# Build with PyTorch CUDA wheel index (optional)
-The `Dockerfile` accepts a build argument `TORCH_INDEX_URL` which is prepended to the `pip install` call inside the builder stage. Use this to point pip at the PyTorch extra-index for CUDA-enabled wheels that match your host drivers. Example:
-
-```bash
-# CUDA 11.7 (example)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 --build-arg TORCH_CUDA=cu117 --build-arg TORCH_VERSION=2.0.1 --build-arg TORCHVISION_VERSION=0.15.2 --build-arg TORCHAUDIO_VERSION=2.0.2 -t dyg-software .
-
-# CUDA 12.x (example; replace with correct tag for your driver)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu121 --build-arg TORCH_CUDA=cu121 --build-arg TORCH_VERSION=2.7.1 --build-arg TORCHVISION_VERSION=0.22.1 --build-arg TORCHAUDIO_VERSION=2.7.1 -t dyg-software .
-```
-
-The `Dockerfile` in this repository installs `torch`, `torchvision` and `torchaudio` during the builder stage using the optional `TORCH_INDEX_URL`, `TORCH_CUDA`, `TORCH_VERSION`, `TORCHVISION_VERSION`, and `TORCHAUDIO_VERSION` build arguments.
-
-- The Docker build should use the `--build-arg TORCH_INDEX_URL=...` option to point pip at the PyTorch extra-index that provides CUDA-enabled wheels. Example:
-
-```bash
-# CUDA 11.7 (example)
-docker build --build-arg TORCH_INDEX_URL=https://download.pytorch.org/whl/cu117 -t dyg-software .
-```
-
 - Verify which torch wheel / CUDA tag to use by checking your host NVIDIA driver and CUDA compatibility. You can find supported/old releases and exact wheel tags on the PyTorch site — check the "Previous Versions" page if you need a specific older wheel:
 
 https://pytorch.org/get-started/previous-versions/
 
-- In short: choose a CUDA-enabled base image whose runtime matches the wheel tag you will install; pass the matching `TORCH_INDEX_URL` when building the image; then run the container with `--gpus all` (and having NVIDIA Container Toolkit installed on the host).
+- In short: choose a CUDA-enabled base image whose runtime matches the wheel tag you will install; pass the matching `TORCH_CUDA` when building the image; then run the container with `--gpus all` or `--nv` (and having NVIDIA Container Toolkit installed on the host).
 
 Run a container (interactive):
 
