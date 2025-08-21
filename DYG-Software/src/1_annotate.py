@@ -28,6 +28,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run YOLO pose prediction on all videos in a folder.")
     parser.add_argument("--video_folder", required=False, default=Path(SCRIPT_DIR / config['PATHS']['default_input_path']), help="Path to the folder containing video files")
     parser.add_argument("--project", required=False, default=Path(SCRIPT_DIR / config['PATHS']['default_project']), help="Project name for YOLO output")
+    parser.add_argument("--device", default=device, help="Device to use for YOLO processing (default: auto-detected GPU or CPU)")
     # parser.add_argument("--yolo_model", default="../model_files", help="Path to YOLO models (default: ../model_files)")
     args = parser.parse_args()
 
@@ -95,6 +96,9 @@ def main():
         #     except subprocess.CalledProcessError as e:
         #         logging.error(f"Repair failed for {video.name}, skipping...")
         #         continue
+
+        if args.device:
+            device = args.device
         if device == "0":
             logging.info("Using GPU for YOLO processing")
         else:
