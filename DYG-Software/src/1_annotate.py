@@ -77,25 +77,6 @@ def main():
         video_id = video.stem  # filename without extension
         logging.info(f"Processing video: {video.name}")
 
-        # --- Check video validity with ffmpeg ---
-        # check_cmd = ["ffmpeg", "-v", "error", "-i", str(video), "-f", "null", "-"]
-        # result = subprocess.run(check_cmd, capture_output=True, text=True)
-
-        # if result.returncode != 0 or result.stderr:
-        #     logging.warning(f"Video {video.name} seems corrupted, attempting repair...")
-        #     fixed_video = video.with_name(f"{video.stem}_fixed{video.suffix}")
-        #     repair_cmd = [
-        #         "ffmpeg", "-y", "-i", str(video),
-        #         "-c", "copy", "-movflags", "faststart",
-        #         str(fixed_video)
-        #     ]
-        #     try:
-        #         subprocess.run(repair_cmd, check=True)
-        #         logging.info(f"Repaired video saved as {fixed_video.name}")
-        #         video = fixed_video  # use repaired video for YOLO
-        #     except subprocess.CalledProcessError as e:
-        #         logging.error(f"Repair failed for {video.name}, skipping...")
-        #         continue
 
         if args.device:
             device = args.device
