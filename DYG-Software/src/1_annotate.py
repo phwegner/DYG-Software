@@ -4,8 +4,6 @@ import subprocess
 import logging
 from pathlib import Path
 import torch
-
-device = "0" if torch.cuda.is_available() else "cpu"
 from configparser import ConfigParser
 
 def main():
@@ -21,6 +19,8 @@ def main():
 
     config = ConfigParser()
     config.read(config_path)
+
+    device = "0" if torch.cuda.is_available() else "cpu"
 
     # -------------------
     # CLI arguments

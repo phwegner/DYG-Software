@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Simple runner that executes scripts in order: 0_prepare.sh, 1_annotate.py, 2_extract_ts.py
+# Simple runner that executes scripts in order: 0_prepare.sh, 0.5_convert.sh, 1_annotate.py, 2_extract_ts.py
 # Usage: ./run_all.sh --input-dir <videos_dir> --project <project_name>
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,10 +15,10 @@ usage() {
   cat <<EOF
 Usage: $0 [--input-dir <videos_dir>] [--project <project_path>]
 
-This will run the prepare script, normalize video orientation, annotate videos with YOLO, then extract timeseries.
+This will run the prepare script, convert videos to mp4, annotate with YOLO, then extract timeseries.
 If no arguments are provided, defaults will be used:
-  input-dir -> ../tests (relative to this script)
-  project   -> ../annotated_videos (relative to this script)
+  input-dir -> ../input_videos (relative to this script)
+  project   -> ../default_project (relative to this script)
 EOF
 }
 
@@ -54,7 +54,7 @@ fi
 # Normalize PROJECT (remove trailing slash)
 PROJECT=${PROJECT%/}
 
-log "Starting full run: prepare -> normalize -> annotate -> extract"
+log "Starting full run: prepare -> convert -> annotate -> extract"
 
 # 0: prepare (download model)
 if [[ -f "${ROOT_DIR}/0_prepare.sh" ]]; then
@@ -65,30 +65,21 @@ else
   exit 1
 fi
 
-# NEW: normalize video orientation
-log "Normalizing video orientation in ${INPUT_DIR}"
-mkdir -p "${INPUT_DIR}/normalized"
+# 0.5: convert .mov to .mp4
+log "Converting .mov videos to .mp4"
+CONVERT_DIR="${INPUT_DIR}/mp4"
+mkdir -p "$CONVERT_DIR"
+shopt -s nullglob
 for f in "${INPUT_DIR}"/*.mov; do
-  [ -e "$f" ] || continue  # skip if no .mov files
-  rotation=$(ffprobe -v error -select_streams v:0 -show_entries stream_tags=rotate -of default=nw=1:nk=1 "$f" || echo 0)
-  out="${INPUT_DIR}/normalized/$(basename "$f")"
-  if [[ "$rotation" != "0" && -n "$rotation" ]]; then
-    log "Fixing rotation ($rotation°) for $f"
-    case "$rotation" in
-      90)  ffmpeg -y -i "$f" -vf "transpose=1" -c:a copy "$out" ;;
-      180) ffmpeg -y -i "$f" -vf "transpose=2,transpose=2" -c:a copy "$out" ;;
-      270) ffmpeg -y -i "$f" -vf "transpose=2" -c:a copy "$out" ;;
-      *)   cp "$f" "$out" ;;
-    esac
-  else
-    log "No rotation needed for $f"
-    cp "$f" "$out"
-  fi
+  out="${CONVERT_DIR}/$(basename "${f%.mov}.mp4")"
+  ffmpeg -y -i "$f" -c:v libx264 -crf 18 -preset fast -c:a aac "$out"
+  log "Converted $f -> $out"
 done
+INPUT_DIR="$CONVERT_DIR"  # point subsequent steps to converted mp4s
 
-# 1: annotate (use normalized folder as input)
+# 1: annotate
 log "Running annotate"
-python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}/normalized" --project "${PROJECT}" || { log "Annotate step failed"; exit 1; }
+python "${ROOT_DIR}/1_annotate.py" --video_folder "${INPUT_DIR}" --project "${PROJECT}" || { log "Annotate step failed"; exit 1; }
 
 # 2: extract
 log "Running extract"
