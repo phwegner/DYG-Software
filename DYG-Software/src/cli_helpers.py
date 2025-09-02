@@ -2,7 +2,7 @@ import typer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sktime.utils.dtw import dtw_path
+from tslearn.metrics import dtw_path
 
 app = typer.Typer()
 
