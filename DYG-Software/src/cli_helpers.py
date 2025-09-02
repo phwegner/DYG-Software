@@ -2,7 +2,8 @@ import typer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from tslearn.metrics import dtw_path
+# from tslearn.metrics import dtw_path
+import fastdtw
 
 app = typer.Typer()
 
@@ -24,11 +25,11 @@ def warp(
     df_b = pd.read_csv(csv_b)
 
     # Convert to 1-D numeric arrays
-    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy()#.reshape(-1, 1)
-    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy()#.reshape(-1, 1)
+    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy().reshape(-1, 1)
+    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy().reshape(-1, 1)
 
     # DTW
-    path, _ = dtw_path(B, A)  # warp B onto A
+    path, _ = fastdtw.dtw(B, A)  # warp B onto A
     B_warped = warp_t_along_path(B, path)
 
     # Save warped CSV
