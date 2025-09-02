@@ -12,11 +12,11 @@ def warp_t_along_path(t, path):
 
 @app.command()
 def warp(
-    csv_a: str = typer.Argument(..., help="Path to first CSV (reference time series)"),
-    col_a: str = typer.Argument(..., help="Column name in CSV A"),
-    csv_b: str = typer.Argument(..., help="Path to second CSV (time series to warp)"),
-    col_b: str = typer.Argument(..., help="Column name in CSV B"),
-    save_path: str = typer.Argument(..., help="Path to save warped CSV"),
+    csv_a: str = typer.Option(..., help="Path to first CSV (reference time series)"),
+    col_a: str = typer.Option(..., help="Column name in CSV A"),
+    csv_b: str = typer.Option(..., help="Path to second CSV (time series to warp)"),
+    col_b: str = typer.Option(..., help="Column name in CSV B"),
+    save_path: str = typer.Option(..., help="Path to save warped CSV"),
     plot_path: str = typer.Option("warped_plot.png", help="Path to save plot")
 ):
     # Load CSVs
