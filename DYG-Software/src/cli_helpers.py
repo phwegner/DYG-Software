@@ -29,7 +29,7 @@ def warp(
     B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy().reshape(-1, 1)
 
     # DTW
-    path, _ = fastdtw.dtw(B, A)  # warp B onto A
+    dist, path = fastdtw.dtw(B, A)  # warp B onto A
     B_warped = warp_t_along_path(B, path)
 
     # Save warped CSV
@@ -49,6 +49,7 @@ def warp(
 
     typer.echo(f"Warped series saved to {save_path}")
     typer.echo(f"Plot saved to {plot_path}")
+    typer.echo(f"DTW distance: {dist}")
 
 if __name__ == "__main__":
     app()
