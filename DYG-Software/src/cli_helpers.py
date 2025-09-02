@@ -39,7 +39,7 @@ def warp(
     distance, path = fastdtw(A, B, dist=euclidean)
 
     # Warp B onto A
-    B_warped = np.array([B[j] for i, j in path if i < len(A)])
+    B_warped = np.array([B[j] for i, j in path])
 
     # Save warped series
     np.savetxt(save_path, B_warped, delimiter=",")
