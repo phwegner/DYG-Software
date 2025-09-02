@@ -24,8 +24,8 @@ def warp(
     df_b = pd.read_csv(csv_b)
 
     # Convert to 1-D numeric arrays
-    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy().reshape(-1, 1)
-    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy().reshape(-1, 1)
+    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy()#.reshape(-1, 1)
+    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy()#.reshape(-1, 1)
 
     # DTW
     path, _ = dtw_path(B, A)  # warp B onto A
