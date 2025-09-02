@@ -32,8 +32,7 @@ def warp(
     dist, path = fastdtw.dtw(B, A)  # warp B onto A
     B_warped = warp_t_along_path(B, path)
 
-    # Save warped CSV
-    pd.DataFrame({col_b: B_warped}).to_csv(save_path, index=False)
+    np.savetxt(save_path, B_warped, delimiter=",")
 
     # Plot vertically
     fig, axes = plt.subplots(3, 1, figsize=(10, 6), sharex=True)
