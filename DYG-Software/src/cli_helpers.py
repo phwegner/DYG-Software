@@ -31,8 +31,8 @@ def warp(
         typer.echo(f"Error: {col_b} not found in {csv_b}")
         raise typer.Exit(code=1)
 
-    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy().flatten()
-    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy().flatten()
+    A = pd.to_numeric(df_a[col_a], errors='coerce').to_numpy().reshape(-1, 1)
+    B = pd.to_numeric(df_b[col_b], errors='coerce').to_numpy().reshape(-1, 1)
 
     # Run DTW
     distance, path = fastdtw(A, B, dist=euclidean)
