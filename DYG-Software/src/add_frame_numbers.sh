@@ -58,15 +58,24 @@ if [[ -z "$FONT" ]]; then
   echo "Warning: no font file found; drawtext may fail or use default font." >&2
 fi
 
+
+# Normalize INPUT_DIR to absolute path
+INPUT_DIR="$(realpath "$INPUT_DIR")"
+
+
 echo "Processing video files under: $INPUT_DIR"
 
 # Find video files and process them
-find "$INPUT_DIR" -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.avi' -o -iname '*.mkv' \) -print0 | while IFS= read -r -d '' video; do
+find "$INPUT_DIR" -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.avi' -o -iname '*.mkv' \) -print0 |
+while IFS= read -r -d '' video; do
   echo "Found: $video"
+
+  # Skip if already processed
   if [[ "$video" == *"-with_frames.mp4" ]]; then
     echo "Skipping already processed file: $video"
     continue
   fi
+
   dir=$(dirname "$video")
   base=$(basename "$video")
   name_noext="${base%.*}"
@@ -78,15 +87,19 @@ find "$INPUT_DIR" -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.avi' 
     continue
   fi
 
-  # Build drawtext filter
+  # Build drawtext filter (quote $FONT in case of spaces)
   if [[ -n "$FONT" ]]; then
-    drawtxt="drawtext=fontfile=$FONT: text='%{n}': x=(w-tw)/2: y=h-(2*lh): fontcolor=white: fontsize=32: box=1: boxcolor=0x00000099"
+    drawtxt="drawtext=fontfile='$FONT': text='%{n}': x=(w-tw)/2: y=h-(2*lh): \
+fontcolor=white: fontsize=32: box=1: boxcolor=0x00000099"
   else
-    drawtxt="drawtext=text='%{n}': x=(w-tw)/2: y=h-(2*lh): fontcolor=white: fontsize=32: box=1: boxcolor=0x00000099"
+    drawtxt="drawtext=text='%{n}': x=(w-tw)/2: y=h-(2*lh): \
+fontcolor=white: fontsize=32: box=1: boxcolor=0x00000099"
   fi
 
   echo "Creating: $out"
-  ffmpeg -hide_banner -loglevel error -y -i "$video" -vf "$drawtxt" -c:a copy "$out" && echo "Saved $out" || echo "Failed for $video"
+  # Use -- to separate options from filenames
+  ffmpeg -hide_banner -loglevel error -y -i "$video" -vf "$drawtxt" -c:a copy -- "$out" \
+    && echo "Saved $out" || echo "Failed for $video"
 
 done
 
