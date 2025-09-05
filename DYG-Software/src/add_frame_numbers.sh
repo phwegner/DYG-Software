@@ -58,11 +58,15 @@ if [[ -z "$FONT" ]]; then
   echo "Warning: no font file found; drawtext may fail or use default font." >&2
 fi
 
-echo "Processing MP4 files under: $INPUT_DIR"
+echo "Processing video files under: $INPUT_DIR"
 
-# Find mp4 files and process them
+# Find video files and process them
 find "$INPUT_DIR" -type f \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.avi' -o -iname '*.mkv' \) -print0 | while IFS= read -r -d '' video; do
   echo "Found: $video"
+  if [[ "$video" == *"-with_frames.mp4" ]]; then
+    echo "Skipping already processed file: $video"
+    continue
+  fi
   dir=$(dirname "$video")
   base=$(basename "$video")
   name_noext="${base%.*}"
