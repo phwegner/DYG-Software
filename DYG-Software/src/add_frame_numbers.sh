@@ -58,7 +58,7 @@ INPUT_DIR="$(realpath "$INPUT_DIR")"
 echo "Processing folders under: $INPUT_DIR"
 
 # Loop over each folder in INPUT_DIR
-for folder in "$INPUT_DIR"/*/; do
+for folder in $INPUT_DIR/*/; do
   [[ -d "$folder" ]] || continue  # skip if not a directory
 
   folder_name=$(basename "$folder")
