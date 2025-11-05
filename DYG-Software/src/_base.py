@@ -148,7 +148,7 @@ class YOLOOutput:
                     parsed = self.parse_pose_data(person_0)
                     parsed['frame'] = frame
                     extracted_keypoints = parsed["keypoints"]
-                    self.coco_sequence.append(([(extracted_keypoints[keypoint]["x"], extracted_keypoints[keypoint]["y"]) for keypoint in self.keypoints], frame))
+                    self.coco_sequence.append(([(extracted_keypoints[keypoint]["x"], extracted_keypoints[keypoint]["y"], extracted_keypoints[keypoint]["confidence"]) for keypoint in self.keypoints], frame))
         self.coco_sequence = sorted(self.coco_sequence, key=lambda x: int(x[1]))
         # logging.info(f"Sequence: {self.coco_sequence}")
         self.coco_sequence = [x[0] for x in self.coco_sequence]
