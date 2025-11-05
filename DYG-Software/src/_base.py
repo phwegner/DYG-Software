@@ -129,6 +129,7 @@ class YOLOOutput:
         self.path = path_to_output
         self.pid = "".join(self.path.split("/")[-1].split(".")[:-1])
         self.coco_sequence = []
+        self.coco_sequence_with_conf = []
         self.y = 1
         self.is_pandas = False
         self.is_cleaned = False
@@ -148,10 +149,13 @@ class YOLOOutput:
                     parsed = self.parse_pose_data(person_0)
                     parsed['frame'] = frame
                     extracted_keypoints = parsed["keypoints"]
-                    self.coco_sequence.append(([(extracted_keypoints[keypoint]["x"], extracted_keypoints[keypoint]["y"], extracted_keypoints[keypoint]["confidence"]) for keypoint in self.keypoints], frame))
+                    self.coco_sequence.append(([(extracted_keypoints[keypoint]["x"], extracted_keypoints[keypoint]["y"]) for keypoint in self.keypoints], frame))
+                    self.coco_sequence_with_conf.append(([(extracted_keypoints[keypoint]["x"], extracted_keypoints[keypoint]["y"], extracted_keypoints[keypoint]["confidence"]) for keypoint in self.keypoints], frame))
         self.coco_sequence = sorted(self.coco_sequence, key=lambda x: int(x[1]))
+        self.coco_sequence_with_conf = sorted(self.coco_sequence_with_conf, key=lambda x: int(x[1]))
         # logging.info(f"Sequence: {self.coco_sequence}")
         self.coco_sequence = [x[0] for x in self.coco_sequence]
+        self.coco_sequence_with_conf = [x[0] for x in self.coco_sequence_with_conf]
 
         if len(self.coco_sequence) == 0:
             raise ValueError("No data found in the provided path")

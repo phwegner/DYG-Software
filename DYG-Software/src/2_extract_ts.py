@@ -59,8 +59,6 @@ def process_video(data, dir, video, pid=None, subsample=False):
 
     output = YOLOOutput(f"{dir}{video}")
 
-    sequence_precleaned = output.coco_sequence.copy()
-
 
 
     if subsample:
@@ -92,7 +90,7 @@ def process_video(data, dir, video, pid=None, subsample=False):
 
         if df_raw is not None:
             df_raw.to_csv(raw_path, index=False)
-            sequence_precleaned = pd.DataFrame(sequence_precleaned)
+            sequence_precleaned = pd.DataFrame(output.coco_sequence_with_conf)
             sequence_precleaned.columns = [keypoints_revert.get(k, k) for k in sequence_precleaned.columns]
             sequence_precleaned.to_csv(subject_dir / "raw_coco_sequence_precleaned.csv", index=False)
             logging.info(f"Saved raw coco sequence to {raw_path}")
