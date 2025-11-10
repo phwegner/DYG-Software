@@ -106,4 +106,19 @@ else
   exit 1
 fi
 
+# 4: extract time series features
+log "Extracting time series features"
+# Process each subject's joint_df.csv
+for subject_dir in "${PROJECT}"/*; do
+  if [[ -d "$subject_dir" ]]; then
+    joint_csv="${subject_dir}/joint_df.csv"
+    if [[ -f "$joint_csv" ]]; then
+      log "Extracting features from ${joint_csv}"
+      python "${ROOT_DIR}/3_extract_ts_features.py" "$joint_csv" || { log "Feature extraction failed for ${joint_csv}"; exit 1; }
+    else
+      log "Warning: joint_df.csv not found in ${subject_dir}"
+    fi
+  fi
+done
+
 log "Full run complete"

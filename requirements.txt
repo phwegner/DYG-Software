@@ -21,6 +21,11 @@ numpy
 tqdm
 matplotlib
 seaborn
+opencv-python
+scikit-learn
 scipy
+pytest
+pillow
+tsfresh
 typer
 fastdtw
